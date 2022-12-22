@@ -1,0 +1,7 @@
+*.local
+
+.parcel-cache
+node_modules
+
+/build
+/test-coverage

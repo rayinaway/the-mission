@@ -1,0 +1,18 @@
+@use '~/src/shell/styles/constants';
+@use '~/src/shell/styles/fonts';
+
+.rootBase {
+	@include constants.theme;
+
+	overflow: hidden;
+
+	&,
+	* {
+		&,
+		&::before,
+		&::after {
+			box-sizing: border-box;
+			overflow-wrap: break-word;
+		}
+	}
+}
