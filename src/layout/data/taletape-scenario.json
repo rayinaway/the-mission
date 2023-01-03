@@ -1,0 +1,10 @@
+{
+	"config": {
+		"capturingViewport": true
+	},
+	"blocks": [
+		{
+			"type": "type"
+		}
+	]
+}
