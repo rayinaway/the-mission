@@ -5,6 +5,7 @@ namespace Scenario {
 }
 
 interface Scenario {
+	name: string;
 	config: {
 		capturingViewport?: boolean;
 	};
