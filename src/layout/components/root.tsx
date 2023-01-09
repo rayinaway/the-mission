@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import taletapeScenario from '~/src/layout/data/taletape-scenario.json';
 import {ServicesProvider} from '~/src/layout/hooks/services';
+import taletapeAssetUrlCatalog from '~/src/layout/taletape-asset-url-catalog';
 import {ServiceCollection} from '~/src/services';
 import RootBase from '~/src/shell/components/root-base';
 import Taletape from '~/src/taletape';
@@ -19,7 +20,10 @@ function Root({services}: PropCollection): React.ReactElement {
 	return (
 		<ServicesProvider value={services}>
 			<RootBase className={cn.root as string}>
-				<Taletape scenario={taletapeScenario} />
+				<Taletape
+					scenario={taletapeScenario}
+					assetUrlCatalog={taletapeAssetUrlCatalog}
+				/>
 			</RootBase>
 		</ServicesProvider>
 	);
