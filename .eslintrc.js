@@ -29,6 +29,7 @@ module.exports = {
 		es6: true
 	},
 	rules: {
+		'@typescript-eslint/no-namespace': 'off',
 		'@typescript-eslint/no-unsafe-member-access': 'off',
 		'@typescript-eslint/no-use-before-define': 'off',
 		'import/newline-after-import': 'error',
