@@ -5,8 +5,8 @@ namespace Scenario {
 }
 
 interface Scenario {
-	name: string;
-	config: {
+	title: string;
+	config?: {
 		capturingViewport?: boolean;
 	};
 	blocks: Array<Scenario.Block>;
