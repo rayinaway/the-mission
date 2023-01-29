@@ -1,47 +1,96 @@
-export class FontLoader {
-	loadedFontFacePromises: Partial<Record<string, Promise<FontFace>>>;
+export class FontAgentCoordinator {
+	protected readonly fontAgents: Partial<Record<string, FontAgent>>;
 
 	constructor() {
-		this.loadedFontFacePromises = {};
+		this.fontAgents = {};
 	}
 
-	loadFont(
+	mountFont(
 		fontKey: string,
-		fontUrl: string,
-		fontFaceDescriptors: FontFaceDescriptors
+		fontFamily: string,
+		fontFaceDescriptors: FontFaceDescriptors,
+		fontBlob: Blob
 	): Promise<void> {
-		let loadedFontFacePromise = this.loadedFontFacePromises[fontKey];
+		let fontAgent = this.fontAgents[fontKey];
 
-		if (loadedFontFacePromise == null) {
+		if (fontAgent == null) {
+			fontAgent = new FontAgent(fontFamily, fontFaceDescriptors, fontBlob);
+		}
+
+		return fontAgent.mountFont();
+	}
+
+	unmountAllFonts(): Promise<void> {
+		const fontIsUnmountedPromises = Object.keys(this.fontAgents).map(
+			(fontKey) => this.unmountFont(fontKey)
+		);
+
+		return Promise.all(fontIsUnmountedPromises).then(() => undefined);
+	}
+
+	unmountFont(fontKey: string): Promise<void> {
+		const fontAgent = this.fontAgents[fontKey];
+
+		if (fontAgent == null) {
+			return Promise.resolve();
+		}
+
+		return fontAgent.unmountFont();
+	}
+}
+
+class FontAgent {
+	protected readonly fontFamily: string;
+	protected readonly fontFaceDescriptors: FontFaceDescriptors;
+
+	protected loadedFontFacePromise: Promise<FontFace> | null;
+
+	private readonly fontBlob: Blob;
+
+	constructor(
+		fontFamily: string,
+		fontFaceDescriptors: FontFaceDescriptors,
+		fontBlob: Blob
+	) {
+		this.fontFamily = fontFamily;
+		this.fontFaceDescriptors = fontFaceDescriptors;
+
+		this.fontBlob = fontBlob;
+
+		this.loadedFontFacePromise = null;
+	}
+
+	mountFont(): Promise<void> {
+		if (this.loadedFontFacePromise == null) {
+			const fontObjectUrl = URL.createObjectURL(this.fontBlob);
+
 			const fontFace = new FontFace(
-				fontKey,
-				`url(${fontUrl})`,
-				fontFaceDescriptors
+				this.fontFamily,
+				`url(${fontObjectUrl})`,
+				this.fontFaceDescriptors
 			);
 
-			loadedFontFacePromise = fontFace.load().then(() => {
+			this.loadedFontFacePromise = fontFace.load().then(() => {
+				URL.revokeObjectURL(fontObjectUrl);
+
 				document.fonts.add(fontFace);
 
 				return fontFace;
 			});
-
-			this.loadedFontFacePromises[fontKey] = loadedFontFacePromise;
 		}
 
-		return loadedFontFacePromise.then(() => undefined);
+		return this.loadedFontFacePromise.then(() => undefined);
 	}
 
-	unloadFont(fontKey: string): Promise<void> {
-		const loadedFontFacePromise = this.loadedFontFacePromises[fontKey];
-
-		if (loadedFontFacePromise == null) {
+	unmountFont(): Promise<void> {
+		if (this.loadedFontFacePromise == null) {
 			return Promise.resolve();
 		}
 
-		return loadedFontFacePromise.then((fontFace) => {
+		return this.loadedFontFacePromise.then((fontFace) => {
 			document.fonts.delete(fontFace);
 
-			delete this.loadedFontFacePromises[fontKey];
+			this.loadedFontFacePromise = null;
 
 			return;
 		});
