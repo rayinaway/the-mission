@@ -1,10 +1,10 @@
 import Monitor from '~/src/monitor';
 
 export interface ServiceCollection {
-	monitor?: Monitor;
+	monitor: Monitor;
 }
 
-const services: ServiceCollection = {};
+const services = {} as ServiceCollection;
 services.monitor = new Monitor(services);
 
 export default services;
