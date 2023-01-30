@@ -5,7 +5,7 @@ module.exports = {
 		'^~/(.*)$': '<rootDir>/src/$1'
 	},
 	testEnvironment: 'jsdom',
-	setupFilesAfterEnv: ['<rootDir>/src/test-setup.js'],
+	setupFilesAfterEnv: ['<rootDir>/test/setup.js'],
 	restoreMocks: true,
 	coverageDirectory: '<rootDir>/test-coverage'
 };
