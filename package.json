@@ -41,7 +41,6 @@
 		"prettier": "^2.8.1",
 		"pretty-quick": "^3.1.3",
 		"process": "^0.11.10",
-		"react-snap": "^1.23.0",
 		"stylelint": "^14.16.0",
 		"stylelint-config-prettier": "^9.0.4",
 		"stylelint-config-rational-order": "^0.1.2",
@@ -51,7 +50,7 @@
 		"typescript": "^4.9.4"
 	},
 	"scripts": {
-		"build": "npm run typecheck && node ./scripts/prebuild.js && parcel build --public-url \".\" --no-source-maps --dist-dir \"./build\" && react-snap",
+		"build": "npm run typecheck && node ./scripts/prebuild.js && parcel build --public-url \".\" --no-source-maps && node ./scripts/postbuild.js",
 		"develop": "node ./scripts/prebuild.js && parcel serve --no-autoinstall --lazy --dist-dir \"./build\" --port 8000 --https",
 		"lint": "npm-run-all \"lint:*\" --parallel --continue-on-error --aggregate-output",
 		"lint:scss": "stylelint \"./src/**/*.scss\"",
@@ -64,8 +63,16 @@
 		"typecheck": "tsc --noEmit"
 	},
 	"source": "./src/index.html",
-	"reactSnap": {
-		"source": "./build",
-		"inlineCss": true
+	"targets": {
+		"default": {
+			"distDir": "./build"
+		},
+		"server": {
+			"source": "./src/server.ts",
+			"isLibrary": true,
+			"context": "node",
+			"outputFormat": "commonjs",
+			"distDir": "./build/server"
+		}
 	}
 }
