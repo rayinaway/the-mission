@@ -61,7 +61,9 @@ class FontAgent {
 	}
 
 	mountFont(): Promise<void> {
-		if (this.loadedFontFacePromise == null) {
+		let loadedFontFacePromise = this.loadedFontFacePromise;
+
+		if (loadedFontFacePromise == null) {
 			const fontObjectUrl = URL.createObjectURL(this.fontBlob);
 
 			const fontFace = new FontFace(
@@ -70,16 +72,18 @@ class FontAgent {
 				this.fontFaceDescriptors
 			);
 
-			this.loadedFontFacePromise = fontFace.load().then(() => {
+			loadedFontFacePromise = fontFace.load().then(() => {
 				URL.revokeObjectURL(fontObjectUrl);
 
 				document.fonts.add(fontFace);
 
 				return fontFace;
 			});
+
+			this.loadedFontFacePromise = loadedFontFacePromise;
 		}
 
-		return this.loadedFontFacePromise.then(() => undefined);
+		return loadedFontFacePromise.then(() => undefined);
 	}
 
 	unmountFont(): Promise<void> {
